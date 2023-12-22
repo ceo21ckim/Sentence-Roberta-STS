@@ -22,9 +22,9 @@ class Model(nn.Module):
     
     
 
-class Model(nn.Module):
+class ModelForSequenceClassification(nn.Module):
     def __init__(self, model_name, in_dim=768, num_labels=1, dr_rate=0.1):
-        super(Model, self).__init__()
+        super(ModelForSequenceClassification, self).__init__()
         self.model = AutoModel.from_pretrained(model_name, num_labels=num_labels)
         self.num_labels = num_labels
         self.dr_rate = dr_rate

@@ -3,7 +3,7 @@ import torch
 from transformers import AutoModelForSequenceClassification, AutoModel
 
 class Model(nn.Module):
-    def __init__(self, model_name, num_labels=1):
+    def __init__(self, model_name='jhgan/ko-sroberta-sts', num_labels=1):
         super(Model, self).__init__()
         self.model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=num_labels)
         self.num_labels = num_labels
@@ -19,9 +19,10 @@ class Model(nn.Module):
     def forward(self, input_ids, attention_mask):
         pooler = self.model(input_ids=input_ids, attention_mask=attention_mask)
         return pooler['logits']
+    
+    
 
-
-class Model_with_classifier(nn.Module):
+class Model(nn.Module):
     def __init__(self, model_name, in_dim=768, num_labels=1, dr_rate=0.1):
         super(Model, self).__init__()
         self.model = AutoModel.from_pretrained(model_name, num_labels=num_labels)
@@ -32,6 +33,7 @@ class Model_with_classifier(nn.Module):
             self.block(in_dim//2, in_dim//4), 
             self.block(in_dim//4, num_labels)
         )
+        
         self._init_weight()
     
     def _init_weight(self):
@@ -39,6 +41,7 @@ class Model_with_classifier(nn.Module):
             if isinstance(m, nn.Linear):
                 nn.init.xavier_normal_(m.weight)
                 nn.init.uniform_(m.bias)
+    
     
     def block(self, in_dim, out_dim):
         outs = nn.Sequential(
@@ -50,5 +53,5 @@ class Model_with_classifier(nn.Module):
     
     def forward(self, input_ids, attention_mask):
         pooler = self.model(input_ids=input_ids, attention_mask=attention_mask)
-        outs = pooler['pooler_output']
+        outs = self.classifier(pooler['pooler_output'])
         return outs

@@ -1,2 +1,2 @@
 # Sentence-Roberta-STS
-Sentence Textual Similarity (STS)
+Semantic Textual Similarity (STS)
